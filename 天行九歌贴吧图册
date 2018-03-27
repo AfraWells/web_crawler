@@ -1,0 +1,22 @@
+from bs4 import BeautifulSoup
+import requests
+import json
+
+url="https://tieba.baidu.com/photo/g/bw/picture/list?kw=%E5%A4%A9%E8%A1%8C%E4%B9%9D%E6%AD%8C&alt=jview&rn=200&tid=4443092026&pn=1&ps=1&pe=40&info=1&_=1522154936122"
+res=requests.get(url).text
+webdata=json.loads(res)
+data=webdata["data"]["pic_list"]
+true_link="http://tieba.baidu.com/photo/p?kw=天行九歌&tid=4443092026&pic_id="
+list=[]
+for n in data:
+    link=n["pic_id"]
+    my=true_link+str(link)
+    list.append(my)
+
+i=0
+headers={"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36"}
+for item in list:
+    pic=requests.get(item,headers=headers)
+    open(r"D:\mgtv\%d.jpg"%i,"wb").write(pic.content)
+    i+=1
+    
