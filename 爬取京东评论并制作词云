@@ -1,0 +1,34 @@
+import requests
+from bs4 import BeautifulSoup
+import json
+import re
+import jieba.analyse
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
+
+
+'''
+for i in range(100):
+    url="https://sclub.jd.com/comment/productPageComments.action?productId=1787068541&score=0&sortType=3&page={}&pageSize=10&isShadowSku=0&callback=fetchJSON_comment98vv4103".format(i)
+    res=requests.get(url).content.decode("gbk")
+    with open(r"D:\mgtv\jd.txt","a") as f:
+        f.write(res)
+'''
+f=open(r"D:\mgtv\jd.txt","r").read()
+content=re.findall(r'"content":(.*?),',f)
+content_list=[]
+for i in content:
+    if not "img" in i:
+        content_list.append(i)
+
+contents="".join(content_list)
+contents_rank=jieba.analyse.extract_tags(contents,topK=30,withWeight=True)
+keyword=dict()
+for i in contents_rank:
+    keyword[i[0]]=i[1]
+wc=WordCloud(background_color='white',
+             max_words=30)
+wc.generate_from_frequencies(keyword)
+plt.imshow(wc)
+plt.axis("off")
+plt.show()
